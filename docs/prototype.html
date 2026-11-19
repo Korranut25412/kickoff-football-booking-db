@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KickOff Booking Prototype</title>
+<style>
+:root{--g:#0f9d58;--gd:#0b7a44;--gl:#e7f6ee;--ink:#1d2421;--mut:#6b746f;--line:#e3e8e5;--bg:#f4f6f5;--warn:#f4a100;--bad:#d93025}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Leelawadee UI","Sarabun",Tahoma,sans-serif;background:#dfe5e2;color:var(--ink);display:flex;justify-content:center;gap:28px;padding:24px 16px;min-height:100vh;align-items:flex-start;flex-wrap:wrap}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;border:10px solid #111;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.scr{position:absolute;inset:0;display:none;flex-direction:column}
+.scr.on{display:flex}
+.top{background:var(--g);color:#fff;padding:46px 18px 16px;display:flex;align-items:center;gap:12px}
+.top h2{font-size:18px;font-weight:600;flex:1}
+.back{font-size:22px;cursor:pointer;width:28px}
+.body{flex:1;overflow-y:auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--line)}
+.btn{display:block;width:100%;background:var(--g);color:#fff;border:0;border-radius:12px;padding:14px;font:600 16px inherit;font-family:inherit;cursor:pointer;text-align:center}
+.btn.ghost{background:#fff;color:var(--g);border:1.5px solid var(--g)}
+.btn:disabled{background:#b9c4bf;cursor:not-allowed}
+.foot{padding:12px 16px 26px;background:#fff;border-top:1px solid var(--line)}
+input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:15px inherit;font-family:inherit;margin:6px 0 12px;background:#fff}
+label{font-size:13px;color:var(--mut)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mut{color:var(--mut);font-size:13px}
+.tag{font-size:12px;padding:3px 9px;border-radius:20px;background:var(--gl);color:var(--gd);white-space:nowrap}
+.tag.w{background:#fff4dc;color:#a86b00}.tag.b{background:#fde8e6;color:var(--bad)}.tag.n{background:#eceff1;color:#555}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.chip{flex:none;padding:8px 14px;border-radius:20px;background:#fff;border:1px solid var(--line);font-size:14px;cursor:pointer}
+.chip.on{background:var(--g);color:#fff;border-color:var(--g)}
+.field{display:flex;gap:12px;cursor:pointer}
+.field .img{width:86px;height:86px;border-radius:12px;background:repeating-linear-gradient(90deg,#16a862 0 12px,#13985a 12px 24px);position:relative;flex:none}
+.field .img:after{content:"";position:absolute;inset:10px;border:2px solid rgba(255,255,255,.75);border-radius:2px}
+.field.off{opacity:.5;cursor:not-allowed}
+.price{color:var(--gd);font-weight:700}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{padding:10px 0;text-align:center;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:14px;cursor:pointer}
+.slot.busy{background:#eceff1;color:#aaa;text-decoration:line-through;cursor:not-allowed}
+.slot.on{background:var(--g);color:#fff;border-color:var(--g)}
+.step{display:flex;align-items:center;gap:10px}
+.step b{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--g);color:var(--g);display:grid;place-items:center;cursor:pointer;font-size:18px}
+.sum div{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
+.sum .tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:10px;font-size:17px;font-weight:700}
+.pay{display:flex;gap:12px;align-items:center;padding:14px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:10px;background:#fff;cursor:pointer}
+.pay.on{border-color:var(--g);background:var(--gl)}
+.qr{width:170px;height:170px;margin:8px auto;background:conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/22px 22px;border:10px solid #fff;outline:1px solid var(--line)}
+.up{border:2px dashed #b9c4bf;border-radius:12px;padding:18px;text-align:center;color:var(--mut);cursor:pointer;background:#fff}
+.up.ok{border-color:var(--g);color:var(--gd);background:var(--gl)}
+.big{font-size:64px;text-align:center;margin:30px 0 6px}
+.stars{font-size:38px;text-align:center;letter-spacing:6px;color:#d0d6d3;cursor:pointer;margin:10px 0}
+.stars .on{color:#fbbc04}
+.nav{display:flex;background:#fff;border-top:1px solid var(--line);padding:8px 0 22px}
+.nav div{flex:1;text-align:center;font-size:12px;color:var(--mut);cursor:pointer}
+.nav div i{display:block;font-style:normal;font-size:20px}
+.nav .on{color:var(--g);font-weight:600}
+.hero{background:linear-gradient(135deg,var(--g),#0a6b3c);color:#fff;border-radius:16px;padding:16px;margin-bottom:14px}
+.hero b{font-size:20px}
+.logo{font-size:30px;font-weight:800;color:var(--g);text-align:center;margin:70px 0 4px}
+.side{width:300px;background:#fff;border-radius:16px;padding:18px;font-size:14px;line-height:1.7}
+.side h3{font-size:16px;margin-bottom:6px}
+.side .t{display:inline-block;background:#dae8fc;border:1px solid #6c8ebf;border-radius:6px;padding:1px 8px;margin:2px;font-size:13px}
+.side ol{padding-left:18px;margin-top:8px}.side li{cursor:pointer}.side li.on{color:var(--g);font-weight:700}
+@media(max-width:760px){.side{width:390px}}
+</style></head><body>
+
+<div class="phone" id="ph">
+
+<!-- 1 เข้าสู่ระบบ -->
+<section class="scr on" id="s-login" data-t="Customer" data-d="ลูกค้าเข้าสู่ระบบด้วยเบอร์โทร หรือสมัครสมาชิกใหม่ (เพิ่มแถวใน Customer)">
+ <div class="body" style="padding:24px">
+  <div class="logo">⚽ KickOff</div><p class="mut" style="text-align:center;margin-bottom:40px">จองสนามฟุตบอลง่ายใน 1 นาที</p>
+  <label>เบอร์โทรศัพท์</label><input value="081-111-1111">
+  <label>รหัสผ่าน</label><input type="password" value="12345678">
+  <button class="btn" onclick="go('home')">เข้าสู่ระบบ</button>
+  <p class="mut" style="text-align:center;margin:16px 0">ยังไม่มีบัญชี?</p>
+  <button class="btn ghost" onclick="go('reg')">สมัครสมาชิก</button>
+  <p class="mut" style="text-align:center;margin-top:40px;cursor:pointer;text-decoration:underline" onclick="go('admin')">เข้าสู่ระบบสำหรับพนักงาน</p>
+ </div>
+</section>
+
+<!-- 2 สมัคร -->
+<section class="scr" id="s-reg" data-t="Customer" data-d="สมัครสมาชิก: ชื่อ-นามสกุล เบอร์โทร อีเมล (เบอร์และอีเมลห้ามซ้ำ) RegisterDate บันทึกอัตโนมัติ">
+ <div class="top"><span class="back" onclick="go('login')">‹</span><h2>สมัครสมาชิก</h2></div>
+ <div class="body">
+  <div class="row"><div style="flex:1"><label>ชื่อ</label><input placeholder="FirstName"></div><div style="flex:1"><label>นามสกุล</label><input placeholder="LastName"></div></div>
+  <label>เบอร์โทรศัพท์</label><input placeholder="Phone">
+  <label>อีเมล</label><input placeholder="Email">
+  <label>รหัสผ่าน</label><input type="password">
+ </div>
+ <div class="foot"><button class="btn" onclick="go('home')">สมัครและเริ่มจอง</button></div>
+</section>
+
+<!-- 3 หน้าแรก -->
+<section class="scr" id="s-home" data-t="Field FieldType Promotion" data-d="แสดงสนามทั้งหมดพร้อมประเภทและราคาต่อชั่วโมง (JOIN Field กับ FieldType) สนามที่ปิดซ่อมกดจองไม่ได้ · แบนเนอร์ดึงโปรโมชันที่ยังไม่หมดอายุ">
+ <div class="top"><h2>สวัสดี คุณสมชาย 👋</h2><span>🔔</span></div>
+ <div class="body">
+  <div class="hero"><div class="mut" style="color:#d6f5e4">โปรโมชันเดือนนี้</div><b>ลด 20% ทั้งเดือน พ.ย.</b><div style="font-size:13px;margin-top:4px">ใช้โค้ด NOV20 · ถึง 30 พ.ย.</div></div>
+  <div class="chips" id="types"></div>
+  <div id="fields"></div>
+ </div>
+ <nav class="nav"><div class="on"><i>🏟️</i>จองสนาม</div><div onclick="go('my')"><i>📋</i>การจองของฉัน</div><div onclick="go('login')"><i>👤</i>ออกจากระบบ</div></nav>
+</section>
+
+<!-- 4 เลือกวันเวลา -->
+<section class="scr" id="s-time" data-t="Booking Field" data-d="เลือกวันที่และช่วงเวลา ช่องที่มีการจองแล้วในสนามเดียวกันจะเป็นสีเทา (กันจองทับเวลา) · จำนวนชั่วโมง = EndTime − StartTime">
+ <div class="top"><span class="back" onclick="go('home')">‹</span><h2 id="t-name">สนาม</h2></div>
+ <div class="body">
+  <div class="card"><div class="row"><b id="t-type"></b><span class="price" id="t-price"></span></div><div class="mut" id="t-size"></div></div>
+  <b>เลือกวันที่</b><div class="chips" id="dates" style="margin-top:8px"></div>
+  <b>เลือกเวลา</b> <span class="mut">(กดชั่วโมงเริ่มและชั่วโมงสุดท้าย)</span>
+  <div class="slots" id="slots" style="margin-top:8px"></div>
+ </div>
+ <div class="foot"><div class="row" style="margin-bottom:10px"><span class="mut" id="t-sel">ยังไม่ได้เลือกเวลา</span><b class="price" id="t-fee"></b></div><button class="btn" id="t-next" disabled onclick="go('extra')">ถัดไป</button></div>
+</section>
+
+<!-- 5 อุปกรณ์ + โค้ด -->
+<section class="scr" id="s-extra" data-t="Equipment Booking_Equipment Promotion" data-d="เช่าอุปกรณ์หลายชนิดในการจองเดียว (M:N → Booking_Equipment เก็บ Quantity) จำนวนห้ามเกิน StockQty · ใส่โค้ดโปรโมชันได้ 1 โค้ด">
+ <div class="top"><span class="back" onclick="go('time')">‹</span><h2>เช่าอุปกรณ์ & ส่วนลด</h2></div>
+ <div class="body">
+  <div id="equip"></div>
+  <div class="card"><b>โค้ดส่วนลด</b><div class="row"><input id="code" placeholder="เช่น NOV20" style="margin:8px 0 0"><button class="btn" style="width:90px;margin-top:8px" onclick="applyCode()">ใช้</button></div><div class="mut" id="code-msg" style="margin-top:6px"></div></div>
+  <div class="card sum" id="sum"></div>
+ </div>
+ <div class="foot"><button class="btn" onclick="go('pay')">ยืนยันการจอง</button></div>
+</section>
+
+<!-- 6 ชำระเงิน -->
+<section class="scr" id="s-pay" data-t="Booking Payment" data-d="สร้าง Booking สถานะ &quot;รอชำระเงิน&quot; แล้วบันทึก Payment 1 รายการ (1:1) พร้อมช่องทางและสลิป สถานะการชำระ = รอตรวจสอบ">
+ <div class="top"><span class="back" onclick="go('extra')">‹</span><h2>ชำระเงิน</h2></div>
+ <div class="body">
+  <div class="card row"><span>ยอดชำระ</span><b class="price" style="font-size:22px" id="p-amt"></b></div>
+  <div class="pay on" data-m="pp" onclick="pick(this)">📱 <div><b>พร้อมเพย์</b><div class="mut">สแกน QR แล้วแนบสลิป</div></div></div>
+  <div class="pay" data-m="bank" onclick="pick(this)">🏦 <div><b>โอนผ่านธนาคาร</b><div class="mut">กสิกรไทย 123-4-56789-0</div></div></div>
+  <div class="pay" data-m="cash" onclick="pick(this)">💵 <div><b>เงินสดที่เคาน์เตอร์</b><div class="mut">ชำระก่อนเวลาเล่น 30 นาที</div></div></div>
+  <div id="qrbox"><div class="qr"></div><div class="up" id="slip" onclick="this.classList.add('ok');this.textContent='✓ แนบสลิปแล้ว slip_0005.jpg'">＋ แนบสลิปการโอน</div></div>
+ </div>
+ <div class="foot"><button class="btn" onclick="go('done')">ส่งหลักฐานการชำระเงิน</button></div>
+</section>
+
+<!-- 7 สำเร็จ -->
+<section class="scr" id="s-done" data-t="Booking Payment" data-d="รอพนักงานตรวจสลิป เมื่อ PaymentStatus = ผ่าน ระบบเปลี่ยน BookingStatus เป็น &quot;ยืนยันแล้ว&quot;">
+ <div class="body" style="text-align:center;padding:24px">
+  <div class="big">⏳</div><h2>ส่งการจองเรียบร้อย</h2><p class="mut" style="margin:6px 0 20px">รอพนักงานตรวจสอบการชำระเงิน</p>
+  <div class="card" style="text-align:left" id="d-card"></div>
+  <button class="btn" onclick="go('my')">ดูการจองของฉัน</button>
+ </div>
+</section>
+
+<!-- 8 การจองของฉัน -->
+<section class="scr" id="s-my" data-t="Booking Payment Review" data-d="ประวัติการจองของลูกค้า (WHERE CustomerID = ผู้ใช้) พร้อมสถานะ · ปุ่มรีวิวแสดงเฉพาะการจองที่ยืนยันแล้วและเล่นจบแล้ว และยังไม่เคยรีวิว">
+ <div class="top"><h2>การจองของฉัน</h2></div>
+ <div class="body" id="mylist"></div>
+ <nav class="nav"><div onclick="go('home')"><i>🏟️</i>จองสนาม</div><div class="on"><i>📋</i>การจองของฉัน</div><div onclick="go('login')"><i>👤</i>ออกจากระบบ</div></nav>
+</section>
+
+<!-- 9 รีวิว -->
+<section class="scr" id="s-review" data-t="Review" data-d="รีวิวได้ 1 ครั้งต่อการจอง (BookingID UNIQUE ใน Review) คะแนน 1–5 ดาว">
+ <div class="top"><span class="back" onclick="go('my')">‹</span><h2>รีวิวสนาม</h2></div>
+ <div class="body">
+  <div class="card"><b>สนาม A1</b><div class="mut">อา. 25 ต.ค. 2569 · 18:00–20:00</div></div>
+  <p style="text-align:center;margin-top:10px">ให้คะแนนสนามนี้</p>
+  <div class="stars" id="stars"></div>
+  <label>ความคิดเห็น</label><textarea rows="4" placeholder="หญ้า ไฟ ห้องน้ำ ที่จอดรถ เป็นยังไงบ้าง"></textarea>
+ </div>
+ <div class="foot"><button class="btn" onclick="reviewed=true;go('my')">ส่งรีวิว</button></div>
+</section>
+
+<!-- 10 หลังบ้าน -->
+<section class="scr" id="s-admin" data-t="Payment Employee Booking Maintenance Field" data-d="พนักงานตรวจสลิป (บันทึก EmployeeID ผู้ตรวจใน Payment) และปิดสนามเพื่อซ่อม (เพิ่ม Maintenance, เปลี่ยน FieldStatus เป็นปิดซ่อม)">
+ <div class="top" style="background:#263238"><span class="back" onclick="go('login')">‹</span><h2>หลังบ้าน · คุณมานะ (แคชเชียร์)</h2></div>
+ <div class="body">
+  <b>สลิปรอตรวจสอบ</b>
+  <div class="card" style="margin-top:8px" id="a-slip"></div>
+  <b>สถานะสนาม</b>
+  <div id="a-fields" style="margin-top:8px"></div>
+ </div>
+</section>
+</div>
+
+<aside class="side">
+ <h3 id="sd-title">หน้าจอ</h3>
+ <div id="sd-t"></div>
+ <p id="sd-d" style="margin-top:8px"></p>
+ <ol id="sd-list"></ol>
+</aside>
+
+<script>
+const TYPES=[{id:0,n:'ทั้งหมด'},{id:1,n:'หญ้าเทียม 5 คน',size:5,p:800},{id:2,n:'หญ้าเทียม 7 คน',size:7,p:1200},{id:3,n:'หญ้าจริง 11 คน',size:11,p:2500}];
+const FIELDS=[{id:1,n:'สนาม A1',t:1},{id:2,n:'สนาม A2',t:1},{id:3,n:'สนาม B1',t:2},{id:4,n:'สนาม B2',t:2,off:'ปิดซ่อมถึง 10 พ.ย.'},{id:5,n:'สนาม C1',t:3}];
+const EQ=[{n:'ลูกฟุตบอล',p:50,s:20},{n:'เสื้อเอี๊ยม (ชุด 10 ตัว)',p:100,s:10},{n:'รองเท้าสตั๊ด',p:80,s:30}];
+const CODES={KICKOFF10:10,NOV20:20};
+const NAMES={login:'เข้าสู่ระบบ',reg:'สมัครสมาชิก',home:'หน้าแรก / เลือกสนาม',time:'เลือกวันและเวลา',extra:'เช่าอุปกรณ์ & ส่วนลด',pay:'ชำระเงิน',done:'จองสำเร็จ',my:'การจองของฉัน',review:'รีวิว',admin:'หลังบ้านพนักงาน'};
+let S={type:0,field:FIELDS[0],date:0,a:null,b:null,q:[0,0,0],disc:0},reviewed=false,approved=false,approved2=false;
+const $=id=>document.getElementById(id),baht=n=>'฿'+n.toLocaleString();
+const ty=f=>TYPES[f.t];
+function go(k){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id==='s-'+k));render[k]&&render[k]();side(k)}
+function side(k){const s=$('s-'+k);$('sd-title').textContent=NAMES[k];$('sd-t').innerHTML='ตารางที่ใช้: '+s.dataset.t.split(' ').map(t=>`<span class="t">${t}</span>`).join('');$('sd-d').textContent=s.dataset.d;
+ $('sd-list').innerHTML=Object.keys(NAMES).map(n=>`<li class="${n===k?'on':''}" onclick="go('${n}')">${NAMES[n]}</li>`).join('')}
+const hrs=()=>S.a==null?0:(S.b??S.a)-S.a+1;
+const fee=()=>ty(S.field).p*hrs();
+const eqfee=()=>S.q.reduce((s,q,i)=>s+q*EQ[i].p,0);
+const total=()=>Math.round((fee()+eqfee())*(100-S.disc)/100);
+const DATES=['วันนี้ 1 พ.ย.','จ. 2','อ. 3','พ. 4','พฤ. 5','ศ. 6','ส. 7'];
+const DLONG=['อา. 1','จ. 2','อ. 3','พ. 4','พฤ. 5','ศ. 6','ส. 7'];
+// ช่วงที่ถูกจองแล้ว ตรงกับข้อมูลตัวอย่างในฐานข้อมูล: key = FieldID-ลำดับวัน
+const BUSY={'1-4':[18,19],'3-5':[19]};
+const busyOf=()=>BUSY[S.field.id+'-'+S.date]||[];
+const render={
+ home(){ $('types').innerHTML=TYPES.map(t=>`<div class="chip ${t.id===S.type?'on':''}" onclick="S.type=${t.id};render.home()">${t.n}</div>`).join('');
+  $('fields').innerHTML=FIELDS.filter(f=>!S.type||f.t===S.type).map(f=>`<div class="card field ${f.off?'off':''}" ${f.off?'':`onclick="S.field=FIELDS[${f.id-1}];S.a=S.b=null;go('time')"`}><div class="img"></div><div style="flex:1"><div class="row"><b>${f.n}</b>${f.off?'<span class="tag b">ปิดซ่อม</span>':'<span class="tag">ว่าง</span>'}</div><div class="mut">${ty(f).n} · ${ty(f).size} คน</div>${f.off?`<div class="mut">${f.off}</div>`:''}<div class="price" style="margin-top:4px">${baht(ty(f).p)} / ชม.</div></div></div>`).join('') },
+ time(){ const f=S.field;$('t-name').textContent=f.n;$('t-type').textContent=ty(f).n;$('t-price').textContent=baht(ty(f).p)+' / ชม.';$('t-size').textContent='ผู้เล่นฝั่งละ '+ty(f).size+' คน';
+  $('dates').innerHTML=DATES.map((d,i)=>`<div class="chip ${i===S.date?'on':''}" onclick="S.date=${i};S.a=S.b=null;render.time()">${d}</div>`).join('');
+  const busy=busyOf();
+  $('slots').innerHTML=[16,17,18,19,20,21,22,23].map(h=>{const b=busy.includes(h),on=S.a!=null&&h>=S.a&&h<=(S.b??S.a);return `<div class="slot ${b?'busy':''} ${on?'on':''}" ${b?'':`onclick="pickH(${h})"`}>${h}:00</div>`}).join('');
+  const n=hrs();$('t-sel').textContent=n?`${S.a}:00–${(S.b??S.a)+1}:00 · ${n} ชม.`:'ยังไม่ได้เลือกเวลา';$('t-fee').textContent=n?baht(fee()):'';$('t-next').disabled=!n },
+ extra(){ $('equip').innerHTML='<div class="card"><b>อุปกรณ์ให้เช่า</b>'+EQ.map((e,i)=>`<div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)"><div><div>${e.n}</div><div class="mut">${baht(e.p)} · เหลือ ${e.s}</div></div><div class="step"><b onclick="qty(${i},-1)">−</b><span style="width:18px;text-align:center">${S.q[i]}</span><b onclick="qty(${i},1)">+</b></div></div>`).join('')+'</div>';sum() },
+ pay(){ $('p-amt').textContent=baht(total()) },
+ done(){ $('d-card').innerHTML=`<div class="row"><b>${S.field.n}</b><span class="tag w">รอตรวจสอบ</span></div><div class="mut">${DATES[S.date]} · ${S.a}:00–${(S.b??S.a)+1}:00</div><div class="row" style="margin-top:6px"><span class="mut">ยอดชำระ</span><b class="price">${baht(total())}</b></div>` },
+ my(){ const cur=S.a!=null?`<div class="card"><div class="row"><b>${S.field.n}</b><span class="tag ${approved?'':'w'}">${approved?'ยืนยันแล้ว':'รอตรวจสอบสลิป'}</span></div><div class="mut">${DLONG[S.date]} พ.ย. 2569 · ${S.a}:00–${(S.b??S.a)+1}:00 · ${baht(total())}</div></div>`:'';
+  $('mylist').innerHTML=cur+`<div class="card"><div class="row"><b>สนาม A1</b><span class="tag">ยืนยันแล้ว</span></div><div class="mut">อา. 25 ต.ค. 2569 · 18:00–20:00 · ฿1,700</div><div class="mut">เช่า: ลูกฟุตบอล ×2</div>${reviewed?'<div class="mut" style="margin-top:8px">⭐ รีวิวแล้ว</div>':`<button class="btn ghost" style="margin-top:10px;padding:10px" onclick="go('review')">⭐ รีวิวสนามนี้</button>`}</div>
+  <div class="card"><div class="row"><b>สนาม C1</b><span class="tag n">ยกเลิก</span></div><div class="mut">ส. 7 พ.ย. 2569 · 16:00–18:00 · ฿5,000</div></div>` },
+ review(){ $('stars').innerHTML=[1,2,3,4,5].map(i=>`<span data-i="${i}" onclick="star(${i})">★</span>`).join('') },
+ admin(){ const btns=f=>`<div class="row" style="margin-top:10px"><button class="btn" style="padding:10px" onclick="${f}=true;render.admin()">✓ ผ่าน</button><button class="btn ghost" style="padding:10px;color:var(--bad);border-color:var(--bad)">✗ ไม่ผ่าน</button></div>`;
+  const bk2=approved2?'':`<div class="row"><div><b>BK-0002 · วิภา รักบอล</b><div class="mut">สนาม B1 · 6 พ.ย. 19:00–20:00</div><div class="mut">โอนผ่านธนาคาร · slip_0002.jpg</div></div><b class="price">฿1,314</b></div>${btns('approved2')}`;
+  const bk5=(approved||S.a==null)?'':`<div class="row" style="margin-top:14px"><div><b>BK-0005 · สมชาย ใจดี</b><div class="mut">${S.field.n} · ${DLONG[S.date]} พ.ย. ${S.a}:00–${(S.b??S.a)+1}:00</div><div class="mut">พร้อมเพย์ · slip_0005.jpg</div></div><b class="price">${baht(total())}</b></div>${btns('approved')}`;
+  $('a-slip').innerHTML=(bk2+bk5)||'<div class="mut">ไม่มีสลิปค้างตรวจ ✓</div>';
+  $('a-fields').innerHTML=FIELDS.map(f=>`<div class="card row" style="padding:10px 14px"><div><b>${f.n}</b><div class="mut">${ty(f).n}</div></div>${f.off?'<span class="tag b">ปิดซ่อม · ช่างปิติ</span>':`<button class="btn ghost" style="width:auto;padding:6px 12px;font-size:13px" onclick="FIELDS[${f.id-1}].off='ปิดซ่อม (เพิ่งแจ้ง)';render.admin()">ปิดซ่อม</button>`}</div>`).join('') }
+};
+function pickH(h){ if(S.a==null||S.b!=null||h<S.a){S.a=h;S.b=null}else{const busy=busyOf();if(busy.some(x=>x>S.a&&x<=h)){S.a=h;S.b=null}else S.b=h} render.time() }
+function qty(i,d){S.q[i]=Math.max(0,Math.min(EQ[i].s,S.q[i]+d));render.extra()}
+function applyCode(){const c=$('code').value.trim().toUpperCase();S.disc=CODES[c]||0;$('code-msg').textContent=S.disc?`✓ ใช้โค้ด ${c} ลด ${S.disc}%`:'✗ ไม่พบโค้ดนี้ หรือหมดอายุแล้ว';sum()}
+function sum(){ $('sum').innerHTML=`<div><span>ค่าสนาม ${S.field.n} (${hrs()} ชม. × ${baht(ty(S.field).p)})</span><span>${baht(fee())}</span></div><div><span>ค่าเช่าอุปกรณ์</span><span>${baht(eqfee())}</span></div>${S.disc?`<div><span>ส่วนลด ${S.disc}%</span><span>−${baht(fee()+eqfee()-total())}</span></div>`:''}<div class="tot"><span>รวมทั้งหมด</span><span class="price">${baht(total())}</span></div>` }
+function pick(el){document.querySelectorAll('.pay').forEach(p=>p.classList.toggle('on',p===el));$('qrbox').style.display=el.dataset.m==='cash'?'none':'block'}
+function star(n){document.querySelectorAll('#stars span').forEach(s=>s.classList.toggle('on',+s.dataset.i<=n))}
+side('login');
+</script>
+</body></html>
